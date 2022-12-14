@@ -1,5 +1,6 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import AsyncBoundary from "../../components/AsyncBoundary";
 
 import Rerender from "../../components/Rerender";
 import UserList from "../../components/UserList";
@@ -9,9 +10,12 @@ const queryClient = new QueryClient();
 function MainPage() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div>
-        <UserListAxios id={1} />
-      </div>
+      {/* <AsyncBoundary
+        pendingFallback={<div>main pending</div>}
+        errorFallback={<div>main error 발생</div>}
+      > */}
+      <UserListAxios />
+      {/* </AsyncBoundary> */}
     </QueryClientProvider>
   );
 }

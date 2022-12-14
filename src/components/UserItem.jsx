@@ -7,10 +7,10 @@ import { useFetchUser } from "../hooks/useFetchUsers";
 
 function UserItem({ id }) {
   const { isLoading, data } = useFetchUser(id);
-  console.log(isLoading);
+  console.log(undefined.name);
 
   console.log(data);
-  return <div>이름: {data?.name}</div>;
+  return <div>이름: {data.name}</div>;
 }
 
 export default UserItem;

@@ -3,10 +3,11 @@ const createPromiseResource = (promise) => {
   let status = "pending";
   let result = null;
 
-  const suspender = promise.then(
+  let suspender = promise.then(
     (res) => {
       status = "fullfilled";
       result = res;
+      console.log(status, result);
     },
     (err) => {
       status = "rejected";
@@ -14,17 +15,19 @@ const createPromiseResource = (promise) => {
     }
   );
 
+  console.log(status, result);
   return {
     read() {
+      console.log(status);
+
       switch (status) {
         case "pending":
-          throw suspender;
-        case "fullfilled":
-          throw result;
+          throw { suspender, status };
+        // throw suspender;
         case "rejected":
           throw result;
         default:
-          break;
+          return result;
       }
     },
   };
