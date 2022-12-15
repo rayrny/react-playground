@@ -7,6 +7,7 @@ const PROMISE_STATUS = {
 };
 
 const promiseStoreMap = new Map();
+window.promiseMap = promiseStoreMap;
 
 const hasKey = (key) => {
   let isExist = false;
@@ -51,13 +52,24 @@ const createCustomPromise = (asyncFunction) => {
   return customPromise;
 };
 
-function useSuspendedQuery(key, asyncFunction) {
+function useSuspendedQuery(key, asyncFunction, id) {
   if (!hasKey(key)) {
     promiseStoreMap.set(key, createCustomPromise(asyncFunction));
   }
 
   const customPromise = getByKey(key);
-  if (customPromise.status === null) {
+  console.log(id, { ...customPromise });
+  if (customPromise.status !== null) {
+    console.log("상태가 pending");
+    console.log(id, customPromise.status);
+    // return { data: customPromise.result };
+  }
+
+  if (
+    customPromise.status === null ||
+    customPromise.status === PROMISE_STATUS.PENDING
+  ) {
+    console.log("서스펜더 실행");
     throw customPromise.run(); // suspender
   } else if (customPromise.status === PROMISE_STATUS.FAIL) {
     throw customPromise.error;

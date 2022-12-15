@@ -3,9 +3,9 @@ import React, { Suspense } from "react";
 import ErrorBoundary from "./ErrorBoundary";
 import CustomSuspense from "./CustomSuspense";
 
-function AsyncBoundary({ errorFallback, pendingFallback, children }) {
+function AsyncBoundary({ rejectedFallback, pendingFallback, children }) {
   return (
-    <ErrorBoundary fallback={errorFallback}>
+    <ErrorBoundary fallback={rejectedFallback}>
       <Suspense fallback={pendingFallback}>{children}</Suspense>
     </ErrorBoundary>
   );
