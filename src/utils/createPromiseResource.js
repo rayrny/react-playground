@@ -1,33 +1,34 @@
 // suspense와 함께 사용하기 위해, 자식 컴포넌트에서 비동기적으로 데이터 패치 시 이 유틸 사용
-const createPromiseResource = (promise) => {
-  let status = "pending";
-  let result = null;
+const store = {};
 
-  let suspender = promise.then(
-    (res) => {
-      status = "fullfilled";
-      result = res;
-      console.log(status, result);
-    },
-    (err) => {
-      status = "rejected";
-      result = err;
-    }
-  );
+window.storeTest = store; // 확인용 코드
+const createPromiseResource = (key, promise) => {
+  if (!store[key]) {
+    store[key] = {
+      status: "pending",
+      result: null,
+    };
+  }
 
-  console.log(status, result);
+  let suspender = promise()
+    .then((res) => {
+      store[key].status = "fullfilled";
+      store[key].result = res;
+    })
+    .catch((err) => {
+      store[key].status = "rejected";
+      store[key].result = err;
+    });
+
   return {
     read() {
-      console.log(status);
-
-      switch (status) {
+      switch (store[key].status) {
         case "pending":
-          throw { suspender, status };
-        // throw suspender;
+          throw suspender;
         case "rejected":
-          throw result;
+          throw store[key].result;
         default:
-          return result;
+          return store[key].result;
       }
     },
   };

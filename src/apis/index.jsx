@@ -6,5 +6,5 @@ export const getUser = async (id) => {
     `https://6391fa92b750c8d178d35d54.mockapi.io/api/profile/${id}`
   );
 
-  return data.data;
+  return data;
 };

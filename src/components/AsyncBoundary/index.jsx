@@ -6,9 +6,11 @@ import Suspense16 from "./Suspense16";
 function AsyncBoundary({ errorFallback, pendingFallback, children }) {
   return (
     <ErrorBoundary fallback={errorFallback}>
-      {/* <Suspense fallback={pendingFallback}> */}
-      <Suspense16 fallback={pendingFallback}>{children}</Suspense16>
-      {/* </Suspense> */}
+      <Suspense fallback={pendingFallback}>
+        {/* <Suspense16 fallback={pendingFallback}> */}
+        {children}
+        {/* </Suspense16> */}
+      </Suspense>
     </ErrorBoundary>
   );
 }
