@@ -5,7 +5,7 @@ import UserItemAxios from "./UserItem.axios";
 // 여기서 Suspense랑 ErrorBoundary 사용
 
 function UserListAxios() {
-  const ids = [1, 3];
+  const ids = [1, 2, 3];
   return (
     <div>
       <h3>유저 프로필 리스트입니다.</h3>

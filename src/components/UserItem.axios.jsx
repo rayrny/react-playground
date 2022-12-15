@@ -7,10 +7,8 @@ import useSuspendedQuery from "../hooks/useSuspensedQuery";
 // https://6391fa92b750c8d178d35d54.mockapi.io/api/profile/:id
 
 function UserItem({ id }) {
-  console.log("oo", id);
-  const { data } = useSuspendedQuery(["queryKey"], () => getUser(id), id);
+  const { data } = useSuspendedQuery(["queryKey", id], () => getUser(id));
 
-  console.log("nnn", id, data);
   return <div>이름: {data.name}</div>;
 }
 
