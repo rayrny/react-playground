@@ -1,7 +1,7 @@
 import React, { useState, Suspense, useRef } from "react";
 
 import { getUser } from "../apis";
-import useSuspendedQuery from "../utils/createPromiseResource";
+import useSuspendedQuery from "../hooks/useSuspensedQuery";
 
 // 여기서 react-query나 axios로 비동기 fetch 작업 진행
 // https://6391fa92b750c8d178d35d54.mockapi.io/api/profile/:id
