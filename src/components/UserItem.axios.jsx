@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, Suspense, useRef } from "react";
 
 import { getUser } from "../apis";
-import createPromiseResource from "../utils/createPromiseResource";
+import useSuspendedQuery from "../utils/createPromiseResource";
 
 // 여기서 react-query나 axios로 비동기 fetch 작업 진행
 // https://6391fa92b750c8d178d35d54.mockapi.io/api/profile/:id
 
-const useResource = (id) =>
-  createPromiseResource("customQueryKey", () => getUser(id));
-
 function UserItem({ id }) {
-  const { data } = useResource(id).read();
+  const { data } = useSuspendedQuery("queryKey", () => getUser(id));
 
+  console.log(data);
   return <div>이름: {data.name}</div>;
 }
 

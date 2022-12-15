@@ -1,37 +1,53 @@
-// suspense와 함께 사용하기 위해, 자식 컴포넌트에서 비동기적으로 데이터 패치 시 이 유틸 사용
-const store = {};
-
-window.storeTest = store; // 확인용 코드
-const createPromiseResource = (key, promise) => {
-  if (!store[key]) {
-    store[key] = {
-      status: "pending",
-      result: null,
-    };
-  }
-
-  let suspender = promise()
-    .then((res) => {
-      store[key].status = "fullfilled";
-      store[key].result = res;
-    })
-    .catch((err) => {
-      store[key].status = "rejected";
-      store[key].result = err;
-    });
-
-  return {
-    read() {
-      switch (store[key].status) {
-        case "pending":
-          throw suspender;
-        case "rejected":
-          throw store[key].result;
-        default:
-          return store[key].result;
-      }
-    },
-  };
+const PROMISE_STATUS = {
+  PENDING: "pending",
+  SUCCESS: "fulfilled",
+  FAIL: "rejected",
 };
 
-export default createPromiseResource;
+const promiseStoreMap = new Map();
+
+const createCustomPromise = (asyncFunction) => {
+  const customPromise = {
+    status: null,
+    result: null,
+    error: null,
+  };
+
+  const suspender = async () => {
+    // 기존 suspender 부분
+    try {
+      customPromise.status = PROMISE_STATUS.PENDING;
+      customPromise.result = await asyncFunction();
+      customPromise.status = PROMISE_STATUS.SUCCESS;
+    } catch (err) {
+      customPromise.status = PROMISE_STATUS.FAIL;
+      customPromise.error = err;
+    }
+  };
+
+  customPromise.run = suspender;
+  return customPromise;
+};
+
+function useSuspendedQuery(key, asyncFunction) {
+  if (!promiseStoreMap.has(key)) {
+    promiseStoreMap.set(key, createCustomPromise(asyncFunction));
+  }
+
+  const customPromise = promiseStoreMap.get(key);
+  if (customPromise.status === null) {
+    throw customPromise.run(); // suspender
+  } else if (customPromise.status === PROMISE_STATUS.FAIL) {
+    throw customPromise.error;
+  }
+
+  if (customPromise.stauts === PROMISE_STATUS.PENDING) {
+    // status의 초기 상태는 null이고 이후에 pending으로 바뀐 뒤, fulfilled 혹은 rejected가 된다.
+    // pending일 경우 suspense에 갖히게 될 텐데, 여기서 감지될 경우는 suspense의 동작이 잘못된 것
+    throw new Error("Suspens Error");
+  }
+
+  return { data: customPromise.result };
+}
+
+export default useSuspendedQuery;

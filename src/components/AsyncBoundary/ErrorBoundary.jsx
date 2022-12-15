@@ -8,10 +8,9 @@ class ErrorBoundary extends React.Component {
     };
   }
 
-  // static getDerivedStateFromError(error) {
-  //   console.log("getDerivedStateFromError");
-  //   return { error };
-  // }
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
 
   componentDidCatch(err, info) {
     console.log("componentDidCatch", err, info);
@@ -20,11 +19,17 @@ class ErrorBoundary extends React.Component {
     });
   }
 
+  // resetErrorBoundary() {
+  //   this.setState({ error: null });
+  // }
+
   render() {
-    if (this.state.error) {
-      return this.props.fallback ?? <h3>에러가 발생했습니다 :(</h3>;
+    const { fallback, children } = this.props;
+    const { error } = this.state;
+    if (error) {
+      return fallback ?? <h3>에러가 발생했습니다 :(</h3>;
     }
-    return this.props.children;
+    return children;
   }
 }
 

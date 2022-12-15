@@ -1,30 +1,29 @@
 import React from "react";
 
-class Suspense16 extends React.Component {
+class CustomSuspense extends React.Component {
   mounted = false;
-  state = {
-    pending: false,
-  };
   constructor({ props }) {
     super(props);
+    this.state = {
+      pending: false,
+    };
   }
 
   componentDidMount() {
-    console.log("mounted");
+    console.log("---- mounted ----");
     this.mounted = true;
   }
 
   componentWillUnmount() {
-    console.log("will unmount");
+    console.log("---- will unmount ----");
     this.mounted = false;
   }
 
   componentDidCatch(err) {
-    console.log(this.mounted);
     if (!this.mounted) return;
-    console.log(err);
     if (err.suspender instanceof Promise) {
       this.setState({ pending: true });
+      console.log(err);
       if (err.status === "pending") {
         err.suspender
           .then(() => {
@@ -43,13 +42,14 @@ class Suspense16 extends React.Component {
   }
 
   render() {
-    // console.log("pending: ", this.state.pending);
-    if (this.state === "pending") {
-      return this.props.fallback ?? <h3>로딩중입니다!</h3>;
+    const { fallback, children } = this.props;
+    const { pending } = this.state;
+    if (pending) {
+      return fallback ?? <h3>로딩중입니다!</h3>;
     } else {
-      return this.props.children;
+      return children;
     }
   }
 }
 
-export default Suspense16;
+export default CustomSuspense;
