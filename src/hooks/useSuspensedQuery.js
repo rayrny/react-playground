@@ -1,3 +1,5 @@
+import _isEqual from "lodash/isEqual";
+
 const PROMISE_STATUS = {
   PENDING: "pending",
   SUCCESS: "fulfilled",
@@ -5,6 +7,26 @@ const PROMISE_STATUS = {
 };
 
 const promiseStoreMap = new Map();
+
+const hasKey = (key) => {
+  let isExist = false;
+  promiseStoreMap.forEach((value, _key) => {
+    if (_isEqual(_key, key)) {
+      isExist = true;
+    }
+  });
+  return isExist;
+};
+
+const getByKey = (key) => {
+  let mapValue = null;
+  promiseStoreMap.forEach((value, _key) => {
+    if (_isEqual(_key, key)) {
+      mapValue = value;
+    }
+  });
+  return mapValue;
+};
 
 const createCustomPromise = (asyncFunction) => {
   const customPromise = {
@@ -30,11 +52,11 @@ const createCustomPromise = (asyncFunction) => {
 };
 
 function useSuspendedQuery(key, asyncFunction) {
-  if (!promiseStoreMap.has(key)) {
+  if (!hasKey(key)) {
     promiseStoreMap.set(key, createCustomPromise(asyncFunction));
   }
 
-  const customPromise = promiseStoreMap.get(key);
+  const customPromise = getByKey(key);
   if (customPromise.status === null) {
     throw customPromise.run(); // suspender
   } else if (customPromise.status === PROMISE_STATUS.FAIL) {

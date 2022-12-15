@@ -5,15 +5,23 @@ import UserItemAxios from "./UserItem.axios";
 // 여기서 Suspense랑 ErrorBoundary 사용
 
 function UserListAxios() {
+  const ids = [1, 1, 3, 4, 5, 6];
   return (
     <div>
-      유저 프로필입니다.
-      <AsyncBoundary
-        pendingFallback={<div>와오오오오오옹 로딩중</div>}
-        rejectedFallback={(e) => <div>에러 발생!!!{e.message}</div>}
-      >
-        <UserItemAxios id={1} />
-      </AsyncBoundary>
+      <h3>유저 프로필 리스트입니다.</h3>
+      {ids.map((id) => {
+        return (
+          <div key={id}>
+            <AsyncBoundary
+              pendingFallback={<div>로딩중...</div>}
+              rejectedFallback={(e) => <div>에러 발생!!!{e.message}</div>}
+            >
+              <UserItemAxios id={id} />
+            </AsyncBoundary>
+            <hr />
+          </div>
+        );
+      })}
     </div>
   );
 }
